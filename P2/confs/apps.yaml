@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    apps.yaml                                          :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: shamsate <shamsate@student.1337.ma>        +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/06/11 15:44:37 by shamsate          #+#    #+#              #
-#    Updated: 2026/06/11 17:21:29 by shamsate         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -18,7 +6,7 @@ data:
   index.html: |
     <!DOCTYPE html>
     <html>
-    <head><title>App One</title></head>
+    <head><title>Hello from App 1</title></head>
     <body>
       <h1>App 1</h1>
     </body>
@@ -71,7 +59,7 @@ data:
   index.html: |
     <!DOCTYPE html>
     <html>
-    <head><title>App Two</title></head>
+    <head><title>Hello from App 2</title></head>
     <body>
       <h1>App 2</h1>
     </body>
@@ -124,7 +112,7 @@ data:
   index.html: |
     <!DOCTYPE html>
     <html>
-    <head><title>App Three</title></head>
+    <head><title>Hello from App 3</title></head>
     <body>
       <h1>App 3</h1>
     </body>
@@ -173,10 +161,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: p2-host-routing
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
   ingressClassName: traefik
   rules:
-    - host: app1.shamsates.iof
+    - host: app1.com
       http:
         paths:
           - path: /
@@ -186,7 +176,7 @@ spec:
                 name: app-one
                 port:
                   number: 80
-    - host: app2.shamsates.iof
+    - host: app2.com
       http:
         paths:
           - path: /
@@ -196,7 +186,7 @@ spec:
                 name: app-two
                 port:
                   number: 80
-    - host: app3.shamsates.iof
+    - host: app3.com
       http:
         paths:
           - path: /
@@ -204,5 +194,15 @@ spec:
             backend:
               service:
                 name: app-three
+                port:
+                  number: 80
+    # 👇 This new rule catches any host (including your IP) and routes to app-one
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-one
                 port:
                   number: 80
